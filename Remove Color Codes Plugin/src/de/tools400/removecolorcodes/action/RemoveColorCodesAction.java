@@ -186,7 +186,8 @@ public class RemoveColorCodesAction extends AbstractLpexCustomAction {
             return true;
         } else {
             if (type != Character.SPACE_SEPARATOR) {
-                System.out.println("No control character: " + charAt + " at index: " + i + ", type: " + type);
+                // System.out.println("No control character: " + charAt + " at
+                // index: " + i + ", type: " + type);
             }
         }
 

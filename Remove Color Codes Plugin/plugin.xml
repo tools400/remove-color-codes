@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="com.ibm.lpex.preload">
+      <preload
+            class="de.tools400.removecolorcodes.lpex.Preload"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.tools400.removecolorcodes.ui.preferences.PreferencesPage"
+            id="de.tools400.removecolorcodes.ui.preferences.PreferencesPage"
+            name="%Title_Remove_Color_Codes"/>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.tools400.removecolorcodes.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+
+</plugin>

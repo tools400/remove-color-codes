@@ -92,7 +92,7 @@ public class RemoveColorCodesPlugin extends AbstractUIPlugin {
 
                 } catch (Throwable e) {
                     MessageDialog.openError(UIUtils.getActiveShell(), Messages.Title_Error, e.getLocalizedMessage());
-                    logError("*** Could not open error log view ***", e);
+                    logError("Could not open error log view", e);
                 }
 
                 return Status.OK_STATUS;

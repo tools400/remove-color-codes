@@ -29,7 +29,9 @@ public class RemoveColorCodesAction extends AbstractLpexCustomAction {
     private static final String COLOR_CODES_LINE_INDICATOR = "Alle Farbattribute:";
 
     /**
-     * Color codes (x'20' to x'3F') as they are translated from EBDIC to UTF-8:
+     * Color codes (x'20' to x'3F') as they are translated from EBDIC to UTF-8.
+     * Some EBCDIC codes are translated to the same value in UTF-8. Duplicates
+     * are resolved by variable 'colorCodesSet'.
      */
     private static final int X20 = 128;
     private static final int X21 = 129;

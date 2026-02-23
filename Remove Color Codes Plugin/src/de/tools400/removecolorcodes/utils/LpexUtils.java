@@ -8,7 +8,11 @@
 
 package de.tools400.removecolorcodes.utils;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.progress.UIJob;
 
 import com.ibm.lpex.core.LpexView;
 import com.ibm.lpex.core.LpexWindow;
@@ -94,13 +98,32 @@ public final class LpexUtils {
     }
 
     /**
-     * Displays a message at the bottom of the LpexView.
+     * Displays a message at the bottom of the LpexView. The message must be
+     * placed in a UI job, because otherwise it is not displayed, if the below
+     * conditions are met:
+     * <ul>
+     * <li>The member has been loaded into the editor.</li>
+     * <li>Option "Remove Color Codes" is executed without a left-click in the
+     * editor before.</li>
+     * </ul>
+     * In this case message <i>(Main Procedure)</i> is not displayed and the
+     * status line is empty. The procedure name is displayed on the first
+     * left-click in the editor.
+     * <p>
      * 
      * @param aLpexView - LpexView that contains the source code.
      * @param message - Message that is displayed.
      */
     public static void displayMessage(LpexView aLpexView, String message) {
-        aLpexView.doCommand("set messageText " + message);
+
+        UIJob job = new UIJob("") {
+            @Override
+            public IStatus runInUIThread(IProgressMonitor arg0) {
+                aLpexView.doCommand("set messageText " + message);
+                return Status.OK_STATUS;
+            }
+        };
+        job.schedule();
     }
 
     /**

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>de.tools400</groupId>
+  <artifactId>removecolorcodes-parent</artifactId>
+  <version>1.2.2-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>Remove Color Codes Parent</name>
+  <description>Parent POM for Remove Color Codes Eclipse Plugin</description>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <tycho.version>4.0.6</tycho.version>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <modules>
+    <module>Remove Color Codes Plugin</module>
+    <module>Remove Color Codes Feature</module>
+    <module>Remove Color codes Update Site</module>
+  </modules>
+
+  <repositories>
+    <repository>
+      <id>local-rdi</id>
+      <layout>p2</layout>
+      <url>file:///c:/IBM/local-repository/</url>
+    </repository>
+
+    <!-- Eclipse 2022-03 (4.23) - Base for RDi 9.6.0.13 -->
+<!--
+    <repository>
+      <id>eclipse-2022-03</id>
+      <layout>p2</layout>
+      <url>https://download.eclipse.org/releases/2022-03</url>
+    </repository>
+-->
+    <!-- Eclipse Updates for additional dependencies -->
+<!--
+    <repository>
+      <id>eclipse-updates-4.23</id>
+      <layout>p2</layout>
+      <url>https://download.eclipse.org/eclipse/updates/4.23</url>
+    </repository>
+-->
+  </repositories>
+
+  <build>
+    <plugins>
+      <!-- Enable Tycho -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-maven-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <extensions>true</extensions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-p2-repository-plugin</artifactId>
+        <version>4.0.6</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>assemble-repository</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includeAllDependencies>false</includeAllDependencies>
+        </configuration>
+      </plugin>
+
+      <!-- Configure target platform -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>target-platform-configuration</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <environments>
+            <environment>
+              <os>win32</os>
+              <ws>win32</ws>
+              <arch>x86_64</arch>
+            </environment>
+            <environment>
+              <os>linux</os>
+              <ws>gtk</ws>
+              <arch>x86_64</arch>
+            </environment>
+            <environment>
+              <os>macosx</os>
+              <ws>cocoa</ws>
+              <arch>x86_64</arch>
+            </environment>
+          </environments>
+          <executionEnvironment>JavaSE-1.8</executionEnvironment>
+        </configuration>
+      </plugin>
+
+      <!-- Compiler plugin for Java 1.8 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+      <!-- Tycho packaging plugin -->
+      <plugin>
+        <groupId>org.eclipse.tycho</groupId>
+        <artifactId>tycho-packaging-plugin</artifactId>
+        <version>${tycho.version}</version>
+        <configuration>
+          <format>'v'yyyyMMdd-HHmm</format>
+        </configuration>
+      </plugin>
+      </plugins>
+  </build>
+
+  <profiles>
+    <!-- Profile for IBM LPEX dependency -->
+    <!-- Note: com.ibm.lpex is not available in public repositories -->
+    <!-- You may need to install it manually to your local Maven repository -->
+    <!-- or set up a corporate repository with RDi dependencies -->
+    <profile>
+      <id>ibm-lpex-local</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
+      <repositories>
+        <repository>
+          <id>local-rdi-libs</id>
+          <url>file://${project.basedir}/local-repository</url>
+          <layout>p2</layout>
+        </repository>
+      </repositories>
+    </profile>
+  </profiles>
+
+</project>

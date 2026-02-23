@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="RemoveColorCodes" default="release" basedir=".">
+
+    <description>
+        Ant build script for Remove Color Codes Eclipse Plugin
+        This script updates version numbers and builds the update site using Maven
+    </description>
+
+    <!-- Load build properties -->
+    <property file="build.properties"/>
+
+    <!-- Project structure properties -->
+    <property name="project.root" location="../.."/>
+    <property name="updatesite.root" location=".."/>
+    <property name="plugin.dir" location="${project.root}/Remove Color Codes Plugin"/>
+    <property name="feature.dir" location="${project.root}/Remove Color Codes Feature"/>
+    <property name="updatesite.dir" location="${updatesite.root}"/>
+
+    <!-- File paths for version updates -->
+    <property name="parent.pom" location="${project.root}/pom.xml"/>
+    <property name="plugin.pom" location="${plugin.dir}/pom.xml"/>
+    <property name="feature.pom" location="${feature.dir}/pom.xml"/>
+    <property name="updatesite.pom" location="${updatesite.dir}/pom.xml"/>
+    <property name="feature.xml" location="${feature.dir}/feature.xml"/>
+    <property name="manifest.mf" location="${plugin.dir}/META-INF/MANIFEST.MF"/>
+
+    <!-- Define the update site artifact name pattern -->
+    <property name="updatesite.zip.pattern.maven" value="de.tools400.removecolorcodes.updatesite-*.zip"/>
+    <property name="updatesite.zip.pattern" value="${project.name}-v*.zip"/>
+    <property name="updatesite.zip.name" value="${project.name}-v${project.version}.zip"/>
+
+    <!-- =============================================================
+          Initialize and display version information.
+         ============================================================= -->
+    <target name="init" description="Initialize and display version formats">
+        <echo message="Maven version: ${project.version.maven}"/>
+        <echo message="OSGi version: ${project.version.osgi}"/>
+    </target>
+
+    <!-- =============================================================
+          Update parent pom.xml version.
+         ============================================================= -->
+    <target name="update-parent-pom" depends="init" description="Update version in parent pom.xml">
+        <echo message="Updating parent pom.xml: ${parent.pom}"/>
+
+        <replaceregexp file="${parent.pom}"
+                      match="(&lt;artifactId&gt;removecolorcodes-parent&lt;/artifactId&gt;[\s\S]*?)&lt;version&gt;[^&lt;]+&lt;/version&gt;"
+                      replace="\1&lt;version&gt;${project.version.maven}&lt;/version&gt;"
+                      flags="s"/>
+
+        <echo message="✓ Updated parent pom.xml to version ${project.version.maven}"/>
+    </target>
+
+    <!-- =============================================================
+          Update child POM parent references.
+         ============================================================= -->
+    <target name="update-child-poms" depends="init" description="Update parent version reference in child POMs">
+        <echo message="Updating child POM parent references..."/>
+
+        <!-- Update Plugin POM -->
+        <replaceregexp file="${plugin.pom}"
+                      match="(&lt;parent&gt;[\s\S]*?&lt;version&gt;)[^&lt;]+(&lt;/version&gt;)"
+                      replace="\1${project.version.maven}\2"
+                      flags="s"/>
+        <echo message="✓ Updated Plugin pom.xml parent reference"/>
+
+        <!-- Update Feature POM -->
+        <replaceregexp file="${feature.pom}"
+                      match="(&lt;parent&gt;[\s\S]*?&lt;version&gt;)[^&lt;]+(&lt;/version&gt;)"
+                      replace="\1${project.version.maven}\2"
+                      flags="s"/>
+        <echo message="✓ Updated Feature pom.xml parent reference"/>
+
+        <!-- Update Update Site POM -->
+        <replaceregexp file="${updatesite.pom}"
+                      match="(&lt;parent&gt;[\s\S]*?&lt;version&gt;)[^&lt;]+(&lt;/version&gt;)"
+                      replace="\1${project.version.maven}\2"
+                      flags="s"/>
+        <echo message="✓ Updated Update Site pom.xml parent reference"/>
+    </target>
+
+    <!-- =============================================================
+          Update feature.xml version.
+         ============================================================= -->
+    <target name="update-feature-xml" depends="init" description="Update version in feature.xml">
+        <echo message="Updating feature.xml: ${feature.xml}"/>
+
+        <replaceregexp file="${feature.xml}"
+                      match='(&lt;feature[^&gt;]*\s+version=")([^"]+)(")'
+                      replace='\1${project.version.osgi}\3'
+                      flags="g"/>
+
+        <echo message="✓ Updated feature.xml to version ${project.version.osgi}"/>
+    </target>
+
+    <!-- =============================================================
+          Update MANIFEST.MF version.
+         ============================================================= -->
+    <target name="update-manifest" depends="init" description="Update version in MANIFEST.MF">
+        <echo message="Updating MANIFEST.MF: ${manifest.mf}"/>
+
+        <replaceregexp file="${manifest.mf}"
+                      match="Bundle-Version: [^\r\n]+"
+                      replace="Bundle-Version: ${project.version.osgi}"
+                      byline="true"/>
+
+        <echo message="✓ Updated MANIFEST.MF to version ${project.version.osgi}"/>
+    </target>
+
+    <!-- =============================================================
+          Update all version files.
+         ============================================================= -->
+    <target name="update-version"
+            depends="update-parent-pom,update-child-poms,update-feature-xml,update-manifest"
+            description="Update version in all project files">
+        <echo message=""/>
+        <echo message="========================================"/>
+        <echo message="Version update completed successfully!"/>
+        <echo message="Maven version: ${project.version.maven}"/>
+        <echo message="OSGi version: ${project.version.osgi}"/>
+        <echo message="========================================"/>
+        <echo message=""/>
+    </target>
+
+    <!-- =============================================================
+          Build update site with Maven.
+         ============================================================= -->
+    <target name="build-maven" depends="init" description="Build the project using Maven">
+        <echo message=""/>
+        <echo message="========================================"/>
+        <echo message="Starting Maven build..."/>
+        <echo message="Command: ${maven.executable} clean verify"/>
+        <echo message="========================================"/>
+        <echo message=""/>
+
+        <exec executable="${maven.executable}"
+              dir="${project.root}"
+              failonerror="true">
+            <arg value="clean"/>
+            <arg value="verify"/>
+        </exec>
+
+        <echo message=""/>
+        <echo message="========================================"/>
+        <echo message="Maven build completed successfully!"/>
+        <echo message="========================================"/>
+        <echo message=""/>
+    </target>
+
+    <!-- =============================================================
+          Copy archived update site to project directory.
+         ============================================================= -->
+    <target name="copy-updatesite" depends="init" description="Copy archived update site from target to project directory">
+        <echo message=""/>
+        <echo message="========================================"/>
+        <echo message="Copying archived update site..."/>
+        <echo message="========================================"/>
+        <echo message=""/>
+
+        <!-- Copy the ZIP file -->
+        <copy todir="${updatesite.root}" flatten="true" verbose="true" failonerror="true">
+            <fileset dir="${updatesite.root}/target" includes="${updatesite.zip.pattern.maven}"/>
+        </copy>
+
+        <!-- Rename the copied ZIP file to match updatesite.zip.name -->
+        <move todir="${updatesite.root}" verbose="true" failonerror="true">
+            <fileset dir="${updatesite.root}" includes="${updatesite.zip.pattern.maven}"/>
+            <mapper type="glob" from="*" to="${updatesite.zip.name}"/>
+        </move>
+
+        <echo message=""/>
+        <echo message="✓ Archived update site copied to: ${basedir}"/>
+        <echo message=""/>
+    </target>
+
+    <!-- =============================================================
+          Full release process: update version then build.
+         ============================================================= -->
+    <target name="release"
+            depends="clean-updatesite,update-version,build-maven,copy-updatesite"
+            description="Update version and build the update site">
+        <echo message=""/>
+        <echo message="========================================"/>
+        <echo message="RELEASE BUILD COMPLETED"/>
+        <echo message="Maven version: ${project.version.maven}"/>
+        <echo message="OSGi version: ${project.version.osgi}"/>
+        <echo message="========================================"/>
+        <echo message=""/>
+    </target>
+
+    <!-- =============================================================
+          Clean build artifacts.
+         ============================================================= -->
+    <target name="clean"
+            depends="clean-maven,clean-updatesite"
+            description="Clean all">
+
+        <echo message="✓ Clean all completed"/>
+    </target>
+
+    <!-- =============================================================
+          Clean Maven build.
+         ============================================================= -->
+    <target name="clean-maven" description="Clean Maven build artifacts">
+        <echo message="Cleaning build artifacts..."/>
+
+        <exec executable="${maven.executable}"
+              dir="${project.root}"
+              failonerror="true">
+            <arg value="clean"/>
+        </exec>
+
+        <echo message="Cleaning archived update site..."/>
+        <delete>
+            <fileset dir="${updatesite.root}" includes="${updatesite.zip.pattern}"/>
+        </delete>
+
+        <echo message="✓ Clean Maven artefacts completed"/>
+    </target>
+
+    <!-- =============================================================
+          Clean archived update site.
+         ============================================================= -->
+    <target name="clean-updatesite" description="Clean archived update site">
+        <echo message="Cleaning archived update site..."/>
+
+        <delete>
+            <fileset dir="${updatesite.root}" includes="${updatesite.zip.pattern}"/>
+        </delete>
+
+        <echo message="✓ Clean archived update site completed"/>
+    </target>
+
+    <!-- =============================================================
+          Display help.
+         ============================================================= -->
+    <target name="help" description="Display available targets">
+        <echo message=""/>
+        <echo message="Available Ant targets:"/>
+        <echo message=""/>
+        <echo message="  release (default) - Update version and build the update site"/>
+        <echo message="  update-version    - Update version in all project files"/>
+        <echo message="  build             - Build project with Maven (clean verify)"/>
+        <echo message="  clean             - Clean Maven build artifacts"/>
+        <echo message="  help              - Display this help message"/>
+        <echo message=""/>
+        <echo message="Configuration:"/>
+        <echo message="  Edit build.properties to set:"/>
+        <echo message="    - project.version: Version to use (e.g., 1.2.1)"/>
+        <echo message="    - maven.executable: Path to Maven executable"/>
+        <echo message=""/>
+    </target>
+
+</project>

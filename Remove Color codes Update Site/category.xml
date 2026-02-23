@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="de.tools400.removecolorcodes.feature" version="0.0.0">
+      <category name="de.tools400.removecolorcodes.updatesite"/>
+   </feature>
+   <category-def name="de.tools400.removecolorcodes.updatesite" label="Remove Color Codes">
+      <description>
+         Remove Color Codes plugin for RDi
+      </description>
+   </category-def>
+</site>

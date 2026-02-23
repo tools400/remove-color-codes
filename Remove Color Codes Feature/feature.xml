@@ -2,7 +2,7 @@
 <feature
       id="de.tools400.removecolorcodes.feature"
       label="Remove Color Codes Feature"
-      version="1.2.0">
+      version="1.2.1">
 
    <license url="http://www.eclipse.org/legal/cpl-v10.html">
       This program and the accompanying materials are made available

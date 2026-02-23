@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Remove Color Codes
 Bundle-SymbolicName: de.tools400.removecolorcodes.plugin;singleton:=true
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.1
 Bundle-Activator: de.tools400.removecolorcodes.RemoveColorCodesPlugin
 Bundle-Vendor: Tools/400
 Bundle-Localization: plugin

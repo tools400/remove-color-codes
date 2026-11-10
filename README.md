@@ -36,3 +36,7 @@ Update the current version number in the following files:
 * Remove Color Codes Feature: `feature.xml`
 * Remove Color Codes Plugin: `plugin.xml`
 * Remove Color Codes Update Site: `site.xml`
+
+## Liability
+
+This software is free and provided without warranty. You use it at your own risk: test it with non-critical data first, and back up your data before you use it. The [license](LICENSE) applies in addition.
